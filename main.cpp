@@ -1,20 +1,41 @@
-﻿// Differentiator.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
-
-#include <iostream>
+﻿#include "RuzalLib/include/Tree.h"
+#include "Differentiator.h"
+#include "LatexDump.h"
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    const char* a = "( ( ( . x . ) sin . ) + ( ( ( . x . ) ^ ( . 2 . ) ) cos . ) )";
+
+    char b[1000];
+    strcpy_s(b, a);
+
+    Node* ress = {};
+    ReadNodeIN(b, &ress);
+    ress->left->left->data.value.var.imm_value = 1;
+
+    Tree tree = {};
+    ExprElem start_data = {};
+    start_data.type = NUM;
+    start_data.value.imm_value = 0;
+    TreeCtor(&tree, "aaa.txt", start_data);
+    tree.root = ress;
+
+    PrintTreeExpr(&tree);
+    Node* diff_ress = DiffExpr(ress);
+
+    Tree tree2 = {};
+    ExprElem start_data2 = {};
+    start_data2.type = NUM;
+    start_data2.value.imm_value = 0;
+    TreeCtor(&tree2, "aaa.txt", start_data2);
+    tree2.root = diff_ress;
+    printf("\n");
+    PrintTreeExpr(&tree2);
+    printf("\n");
+    ExpressionOptimization(&tree2);
+    PrintTreeExpr(&tree2);
+
+    PrintLatexExpr(&tree2, "latex_dump.tex");
+
+    printf("\n%lf", Eval(ress));
 }
-
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
-
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
