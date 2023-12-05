@@ -3,8 +3,8 @@
 #include "LatexDump.h"
 
 int main()
-{
-    const char* a = "( ( ( . x . ) sin . ) + ( ( ( . x . ) ^ ( . 2 . ) ) cos . ) )";
+{ 
+    const char* a = " ( ( (  . x . )  sin . ) + ( ( ( . x . ) ^ ( . 2 . ) ) cos . ) )";
 
     char b[1000];
     strcpy_s(b, a);

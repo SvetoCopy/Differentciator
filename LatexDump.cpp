@@ -2,23 +2,23 @@
 
 static int CommandPriority(int cmd_code) {
 	switch (cmd_code) {
-#define DEF_EXPR_CMD(cmd_name, command, cmd_code, priority, ...) \
+		#define DEF_EXPR_CMD(cmd_name, command, cmd_code, priority, ...) \
 			case cmd_code:                                               \
 				return priority;        
-#include "../../def_expr_cmd.h"
-#undef DEF_EXPR_CMD
+		#include "def_expr_cmd.h"
+		#undef DEF_EXPR_CMD
 	}
 }
 
 void PrintCommand(int cmd_code, FILE* file) {
 	switch (cmd_code) {
-#define DEF_EXPR_CMD(cmd_name, command, cmd_code, priority, ...)  \
+		#define DEF_EXPR_CMD(cmd_name, command, cmd_code, priority, ...)  \
 			case cmd_code: {                                              \
 				printf(" " #command " ");                                 \
 				break;                                                    \
 			}
-#include "../../def_expr_cmd.h"
-#undef DEF_EXPR_CMD
+		#include "def_expr_cmd.h"
+		#undef DEF_EXPR_CMD
 	}
 }
 
@@ -69,16 +69,19 @@ void PrintLatexNode(Node* child, Node* parent, FILE* file) {
 			fprintf(file, " - ");
 			PrintLatexNode(child->right, child, file);
 			break;
+
 		case ADD:
 			PrintLatexNode(child->left, child, file);
 			fprintf(file, " + ");
 			PrintLatexNode(child->right, child, file);
 			break;
+
 		case MUL:
 			PrintLatexNode(child->left, child, file);
 			fprintf(file, " \\cdot ");
 			PrintLatexNode(child->right, child, file);
 			break;
+
 		case DIV:
 			fprintf(file, " \\dfrac{");
 			PrintLatexNode(child->left, child, file);
@@ -86,6 +89,7 @@ void PrintLatexNode(Node* child, Node* parent, FILE* file) {
 			PrintLatexNode(child->right, child, file);
 			fprintf(file, " } ");
 			break;
+
 		case POW:
 			if (isSqrtExpr(child)) {
 				fprintf(file, " \\sqrt[");
@@ -102,6 +106,7 @@ void PrintLatexNode(Node* child, Node* parent, FILE* file) {
 				fprintf(file, " } ");
 				break;
 			}
+
 		case LOG:
 			fprintf(file, " \log_{ ");
 			PrintLatexNode(child->left, child, file);
@@ -109,12 +114,13 @@ void PrintLatexNode(Node* child, Node* parent, FILE* file) {
 			PrintLatexNode(child->right, child, file);
 			fprintf(file, " } ");
 			break;
+
 		case COS:
 			fprintf(file, " \cos( ");
 			PrintLatexNode(child->left, child, file);
 			fprintf(file, " ) ");
 			break;
-		
+
 		case SIN:
 			fprintf(file, " \sin( ");
 			PrintLatexNode(child->left, child, file);
@@ -151,8 +157,10 @@ void PrintLatexExpr(Tree* tree, const char* latex_file_name) {
 				"\\begin{document}\n"
 				"\\maketitle\n"
 				"\\section{Expression}\n");
+
 	fprintf(file, "$");
 	PrintLatexNode(tree->root, nullptr, file);
 	fprintf(file, "$\n");
+
 	fprintf(file, "\\end{document}");
 }

@@ -1,10 +1,10 @@
 #ifndef DIFFERCIATOR_DED
 #define DIFFERCIATOR_DED
-#include "RuzalLib/include/Tree.h"
+#include "TreeRead.h"
 #include <math.h>
 #include <cstdlib>
 
-const double EXP     = 2.7182818284590451;
+const double EXP     = 2.72;
 const double EPSILON = 0.01;
 
 enum ExprCommands {

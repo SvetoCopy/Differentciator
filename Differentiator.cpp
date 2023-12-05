@@ -32,24 +32,36 @@ bool isEqual(double first, double second) {
 	return abs(first - second) < EPSILON;
 }
 
+// CHECK_CMD(MUL) || CHECK_CMD(DIV)
+
+#define CHECK_CMD(cmd)                            \
+		node->data.type == COMMAND &&             \
+		NODE_CMD_CODE(node) == cmd
+
+#define CHECK_RIGHT_NUM(num)                      \
+		node->right->data.type == NUM &&          \
+		isEqual(NODE_IMM_VALUE(node->right), num) \
+
+#define CHECK_LEFT_NUM(num)                       \
+		node->left->data.type == NUM &&           \
+		isEqual(NODE_IMM_VALUE(node->left), 0)    \
+
 Node* MulNDivOptimization(Node* node, int* count_diff) {
-	if (node->data.type == COMMAND && NODE_CMD_CODE(node) == MUL && 
-	   (node->right->data.type == NUM && isEqual(NODE_IMM_VALUE(node->right), 0) ||
-	    node->left->data.type == NUM && isEqual(NODE_IMM_VALUE(node->left), 0)))
+	if (CHECK_CMD(MUL) && (CHECK_RIGHT_NUM(0) || CHECK_LEFT_NUM(0)))
 	{
 		(*count_diff)++;
 		return CreateImmNode(0, nullptr, nullptr);
 	}
 
-	if (node->data.type == COMMAND && (NODE_CMD_CODE(node) == MUL || NODE_CMD_CODE(node) == DIV)) 
+	if (CHECK_CMD(MUL) || CHECK_CMD(DIV))
 	{
-		if (node->right->data.type == NUM && isEqual(NODE_IMM_VALUE(node->right), 1))
+		if (CHECK_RIGHT_NUM(1))
 		{
 			(*count_diff)++;
 			return node->left;
 		}
 			
-		if (node->left->data.type == NUM && isEqual(NODE_IMM_VALUE(node->left), 1))
+		if (CHECK_LEFT_NUM(1))
 		{
 			(*count_diff)++;
 			return node->right;
@@ -58,21 +70,20 @@ Node* MulNDivOptimization(Node* node, int* count_diff) {
 }
 
 Node* PowOptimization(Node* node, int* count_diff) {
-	if (node->data.type == COMMAND && NODE_CMD_CODE(node) == POW) {
-		if ((node->right->data.type == NUM && isEqual(NODE_IMM_VALUE(node->right), 0)) ||
-			(node->left->data.type == NUM && isEqual(NODE_IMM_VALUE(node->left), 1)))
+	if (CHECK_CMD(POW)) {
+		if (CHECK_RIGHT_NUM(0) || CHECK_LEFT_NUM(1))
 		{
 			(*count_diff)++;
 			return CreateImmNode(1, nullptr, nullptr);
 		}
 
-		if (node->right->data.type == NUM && isEqual(NODE_IMM_VALUE(node->right), 1))
+		if (CHECK_RIGHT_NUM(1))
 		{
 			(*count_diff)++;
 			return node->left;
 		}
 
-		if (node->left->data.type == NUM && isEqual(NODE_IMM_VALUE(node->left), 0))
+		if (CHECK_LEFT_NUM(0))
 		{
 			(*count_diff)++;
 			return CreateImmNode(0, nullptr, nullptr);
@@ -81,16 +92,15 @@ Node* PowOptimization(Node* node, int* count_diff) {
 }
 
 Node* AddNSubOptimization(Node* node, int* count_diff) {
-	if (node->data.type == COMMAND && 
-	   (NODE_CMD_CODE(node) == SUB || NODE_CMD_CODE(node) == ADD))
+	if (CHECK_CMD(ADD) || CHECK_CMD(SUB))
 	{
-		if (node->right->data.type == NUM && isEqual(NODE_IMM_VALUE(node->right), 0))
+		if (CHECK_RIGHT_NUM(0))
 		{
 			(*count_diff)++;
 			return node->left;
 		}
 
-		if (node->left->data.type == NUM && isEqual(NODE_IMM_VALUE(node->left), 0))
+		if (CHECK_LEFT_NUM(0))
 		{
 			(*count_diff)++;
 			return node->right;
@@ -123,7 +133,7 @@ Node* SecondNodeOptimization(Node* node, int* count_diff) {
 		return changed_node;
 	}
 
-	node->left = SecondNodeOptimization(node->left, count_diff);
+	node->left  = SecondNodeOptimization(node->left, count_diff);
 	node->right = SecondNodeOptimization(node->right, count_diff);
 
 	return node;
@@ -168,12 +178,12 @@ Node* DiffExpr(const Node* node) {
 		return CreateImmNode(1, nullptr, nullptr);
 
 	switch (NODE_CMD_CODE(node)) {
-			#define DEF_EXPR_CMD(command_name, command_str, int_code, priority, args_num, handle, ...)  \
-					case int_code: {                                                                    \
-						__VA_ARGS__                                                                     \
-					}
-			#include "def_expr_cmd.h"
+		#define DEF_EXPR_CMD(command_name, command_str, int_code, priority, args_num, handle, ...)  \
+				case int_code: {                                                                    \
+					__VA_ARGS__                                                                     \
+				}
+		#include "def_expr_cmd.h"
 
-			#undef DEF_EXPR_CMD
+		#undef DEF_EXPR_CMD
 	}
 }
