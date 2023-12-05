@@ -20,5 +20,5 @@ void ExpressionOptimization(Tree* tree);
 double LogBase(double num, double base);
 double Eval(const Node* node);
 
-Node* DiffExpr(const Node* node);
+Node* DiffExpr(const Node* node, ExprVar diff_var);
 #endif // !DIFFERCIATOR_DED

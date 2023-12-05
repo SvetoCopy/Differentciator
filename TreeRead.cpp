@@ -275,12 +275,16 @@ void PrintTreeExpr(Tree* tree) {
 	PrintNodeExpr(tree->root, nullptr);
 }
 
-bool ÑheckVarInNode(Node* node) {
-	if (node == nullptr) return false;
-	if (node->data.type == VAR) return true;
+bool isEqualVar(ExprVar var1, ExprVar var2) {
+	return strcmp(var1.name, var2.name) == 0;
+}
 
-	if (ÑheckVarInNode(node->left)) return true;
-	if (ÑheckVarInNode(node->right)) return true;
+bool ÑheckVarInNode(Node* node, ExprVar var) {
+	if (node == nullptr) return false;
+	if (node->data.type == VAR) return isEqualVar(node->data.value.var, var);
+
+	if (ÑheckVarInNode(node->left, var)) return true;
+	if (ÑheckVarInNode(node->right, var)) return true;
 
 	return false;
 }

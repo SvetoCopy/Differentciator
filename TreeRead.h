@@ -35,8 +35,9 @@ enum NodeElem {
 int  ReadNodeIN(char* str, Node** res);
 void PrintTreeExpr(Tree* tree);
 
+bool isEqualVar(ExprVar var1, ExprVar var2);
 Node* CopyNode(const Node* node);
-bool ÑheckVarInNode(Node* node);
+bool ÑheckVarInNode(Node* node, ExprVar var);
 
 Node* CreateCommandNode(int command_code, Node* left, Node* right);
 Node* CreateImmNode(double imm_value, Node* left, Node* right);

@@ -10,122 +10,68 @@ static int CommandPriority(int cmd_code) {
 	}
 }
 
-void PrintCommand(int cmd_code, FILE* file) {
-	switch (cmd_code) {
-		#define DEF_EXPR_CMD(cmd_name, command, cmd_code, priority, ...)  \
-			case cmd_code: {                                              \
-				printf(" " #command " ");                                 \
-				break;                                                    \
-			}
-		#include "def_expr_cmd.h"
-		#undef DEF_EXPR_CMD
-	}
-}
-
 bool isNeedBrackets(Node* child, Node* parent) {
 
 	assert(child != nullptr);
 
 	if (parent == nullptr ||
-		CommandPriority(NODE_CMD_CODE(child)) < CommandPriority(NODE_CMD_CODE(parent)))
+		CommandPriority(NODE_CMD_CODE(child)) <= CommandPriority(NODE_CMD_CODE(parent)))
 		return false;
 
 	return true;
 }
 
 bool isSqrtExpr(Node* node) {
+
+	assert(node != nullptr);
+
 	if (node->right->data.type == COMMAND &&
 		NODE_CMD_CODE(node) == DIV &&
 		node->right->left->data.type == NUM &&
 		NODE_IMM_VALUE(node->right->left) == 1) {
 
 		return true;
-
 	}
 
 	return false;
 }
 
+bool isIntValue(double num) {
+	return (num - (int)num < EPSILON) ? true : false;
+}
+
 void PrintLatexNode(Node* child, Node* parent, FILE* file) {
+
 	assert(child != nullptr);
 
 	if (child->data.type == VAR) {
 		fprintf(file, "%s", NODE_VAR_NAME(child));
 		return;
 	}
+
 	if (child->data.type == NUM) {
-		fprintf(file, "%.2lf", NODE_IMM_VALUE(child));
+
+		if (isIntValue(NODE_IMM_VALUE(child)))
+			fprintf(file, "%d", (int)NODE_IMM_VALUE(child));
+		else
+			fprintf(file, "%.2lf", NODE_IMM_VALUE(child));
+
 		return;
 	}
+
 	if (child->data.type == COMMAND) {
 		bool is_need_brackets = isNeedBrackets(child, parent);
-		
+
 		if (is_need_brackets)
 			fprintf(file, " ( ");
 
 		switch (NODE_CMD_CODE(child)) {
-		case SUB:
-			PrintLatexNode(child->left, child, file);
-			fprintf(file, " - ");
-			PrintLatexNode(child->right, child, file);
+		#define DEF_EXPR_CMD(command_name, command_str, int_code, priority, args_num, handle, diff, ...) \
+		case command_name:																				 \
+			__VA_ARGS__																	                 \
 			break;
-
-		case ADD:
-			PrintLatexNode(child->left, child, file);
-			fprintf(file, " + ");
-			PrintLatexNode(child->right, child, file);
-			break;
-
-		case MUL:
-			PrintLatexNode(child->left, child, file);
-			fprintf(file, " \\cdot ");
-			PrintLatexNode(child->right, child, file);
-			break;
-
-		case DIV:
-			fprintf(file, " \\dfrac{");
-			PrintLatexNode(child->left, child, file);
-			fprintf(file, " }{ ");
-			PrintLatexNode(child->right, child, file);
-			fprintf(file, " } ");
-			break;
-
-		case POW:
-			if (isSqrtExpr(child)) {
-				fprintf(file, " \\sqrt[");
-				PrintLatexNode(child->right, child, file);
-				fprintf(file, " ]{ ");
-				PrintLatexNode(child->left, child, file);
-				fprintf(file, " } ");
-			}
-			else {
-				fprintf(file, " { ");
-				PrintLatexNode(child->left, child, file);
-				fprintf(file, " } ^ {\\small ");
-				PrintLatexNode(child->right, child, file);
-				fprintf(file, " } ");
-				break;
-			}
-
-		case LOG:
-			fprintf(file, " \log_{ ");
-			PrintLatexNode(child->left, child, file);
-			fprintf(file, " }{ ");
-			PrintLatexNode(child->right, child, file);
-			fprintf(file, " } ");
-			break;
-
-		case COS:
-			fprintf(file, " \cos( ");
-			PrintLatexNode(child->left, child, file);
-			fprintf(file, " ) ");
-			break;
-
-		case SIN:
-			fprintf(file, " \sin( ");
-			PrintLatexNode(child->left, child, file);
-			fprintf(file, " ) ");
-			break;
+		#include "def_expr_cmd.h"
+		
 		}
 
 		if (is_need_brackets)
@@ -134,6 +80,7 @@ void PrintLatexNode(Node* child, Node* parent, FILE* file) {
 }
 
 void PrintLatexExpr(Tree* tree, const char* latex_file_name) {
+
 	assert(tree != nullptr);
 	
 	FILE* file = {};

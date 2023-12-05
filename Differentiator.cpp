@@ -168,19 +168,23 @@ void ExpressionOptimization(Tree* tree) {
 	} while (count_diff != 0);
 }
 
-Node* DiffExpr(const Node* node) {
+Node* DiffExpr(const Node* node, ExprVar diff_var) {
 
 	assert(node != nullptr);
 	
 	if (node->data.type == NUM)
 		return CreateImmNode(0, nullptr, nullptr);
-	if (node->data.type == VAR)
+
+	if (node->data.type == VAR && !isEqualVar(node->data.value.var, diff_var))
+		return CreateImmNode(0, nullptr, nullptr);
+
+	else if (node->data.type == VAR && isEqualVar(node->data.value.var, diff_var))
 		return CreateImmNode(1, nullptr, nullptr);
 
 	switch (NODE_CMD_CODE(node)) {
-		#define DEF_EXPR_CMD(command_name, command_str, int_code, priority, args_num, handle, ...)  \
-				case int_code: {                                                                    \
-					__VA_ARGS__                                                                     \
+		#define DEF_EXPR_CMD(command_name, command_str, int_code, priority, args_num, handle, diff, ...)  \
+				case int_code: {                                                                          \
+					diff                                                                                  \
 				}
 		#include "def_expr_cmd.h"
 

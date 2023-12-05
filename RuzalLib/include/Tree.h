@@ -16,7 +16,7 @@ enum ExprElemType {
 };
 
 struct ExprVar {
-	char* name;
+	const char* name;
 	double imm_value;
 };
 

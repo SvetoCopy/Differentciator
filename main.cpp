@@ -4,7 +4,7 @@
 
 int main()
 { 
-    const char* a = " ( ( (  . x . )  sin . ) + ( ( ( . x . ) ^ ( . 2 . ) ) cos . ) )";
+    const char* a = " ( ( (  . y . )  sin . ) + ( ( ( . x . ) ^ ( . 2 . ) ) cos . ) )";
 
     char b[1000];
     strcpy_s(b, a);
@@ -21,7 +21,10 @@ int main()
     tree.root = ress;
 
     PrintTreeExpr(&tree);
-    Node* diff_ress = DiffExpr(ress);
+    ExprVar var = {};
+    var.imm_value = 0;
+    var.name = "y";
+    Node* diff_ress = DiffExpr(ress, var);
 
     Tree tree2 = {};
     ExprElem start_data2 = {};
