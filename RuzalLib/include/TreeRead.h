@@ -31,12 +31,12 @@ enum NodeElem {
 	RIGHT_ELEM = 2
 };
 
+
 int  ReadNodeIN(char* str, Node** res);
-void PrintTreeExpr(Tree* tree, FILE* stream);
+void PrintTreeExpr(Tree* tree);
 
 bool isEqualVar(ExprVar var1, ExprVar var2);
-
-
+Node* CopyNode(const Node* node);
 bool ÑheckVarInNode(Node* node, ExprVar var);
 
 Node* CreateCommandNode(int command_code, Node* left, Node* right);

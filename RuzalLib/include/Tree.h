@@ -13,6 +13,7 @@ enum ExprElemType {
 	NUM = 0,
 	COMMAND = 1,
 	VAR = 2,
+	DELETED = -1
 };
 
 struct ExprVar {
@@ -43,14 +44,21 @@ struct Tree {
 	Node*  root;
 	size_t size;
 	FILE*  graph_logfile;
+	FILE*  latex_logfile;
 };
 
 Node* OpNew(NodeInfo_t data);
 void  OpDelete(Node* node);
+Node* CopyNode(const Node* node);
 
-int TreeCtor(Tree* tree, const char* file_name, NodeInfo_t start_data);
+void _NodeDtor(Node* node, const char* file, size_t line, const char* func);
+
+#define NodeDtor(node) _NodeDtor(node, __FILE__, __LINE__, __FUNCTION__)
+
+int TreeCtor(Tree* tree, const char* graph_logfile_name, NodeInfo_t start_data, const char* latex_file_name);
 int TreeDtor(Tree* tree);
-int TreeVerify(Tree* tree);
+void TreeVerify(Tree* tree);
 
+void VerifyNode(const Node* node);
 
 #endif // !TREE_DED

@@ -1,7 +1,5 @@
 #include "../include/super_io.h"
 
-
-
 FileInfo FileInfoCtor(const char* file_name) {
 	FileInfo file = {};
 	file.name = file_name;
@@ -12,8 +10,7 @@ FileInfo FileInfoCtor(const char* file_name) {
 
 	file.buff_size = GetFileSize(&file);
 	
-
-	file.buff = (char*)calloc(file.buff_size, sizeof(char));
+	file.buff	   = (char*)calloc(file.buff_size, sizeof(char));
 	ReadFile(&file);
 
 	file.n_lines = GetLinesCount(&file);
@@ -113,6 +110,9 @@ size_t GetLinesCount(FileInfo* file) {
 void ReadFile(FileInfo* file) {
 	fopen_s(&file->input_file, file->name, "r");
 	
+
+	if (file->input_file == NULL)
+		file->name;
 	assert(file->input_file != NULL);
 	assert(file->buff != NULL);
 
