@@ -1,6 +1,8 @@
 ﻿#include "RuzalLib/include/Tree.h"
 #include "Differentiator.h"
 #include "LatexDump.h"
+#include "Optimization.h"
+
 
 int main()
 { 
@@ -46,10 +48,10 @@ int main()
     tangent_tree.root = CopyNode(tree.root);
     tangent_tree.latex_logfile = tree.latex_logfile;
 
-    GetTangentInPoint(&tangent_tree, var, 3);
+    GetTangentInPoint(&tangent_tree, var, 0);
     ExpressionOptimization(&tangent_tree);
     CreateExprSchedule(&tree, &tangent_tree, var, "LATEX_PROJECT/tangent.jpeg");
-    AddImageLatex(&tree, "teylor.jpeg");
+    AddImageLatex(&tree, "tangent.jpeg");
 
     TreeDtor(&tree);
 }

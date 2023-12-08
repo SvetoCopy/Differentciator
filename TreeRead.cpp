@@ -65,19 +65,18 @@ int ReadExprElem(char* str, Node** node) {
 		char str_elem[MAX_NODEINFO_SIZE] = {};
 		read_arg_count = sscanf(str, " %s %n", &str_elem, &elem_read_size);
 
-		if (strcmp(str_elem, DEFAULT_NIL) == 0) {
-			*node = nullptr;
+		if (strcmp(str_elem, DEFAULT_NIL) == 0) *node = nullptr;
+
+		#define DEF_EXPR_CMD(cmd_name, str_command, cmd_code, ...) \
+																   \
+        else if (strcmp(str_elem, #str_command) == 0) {			   \
+			ExprElem data = CreateExprCommand(cmd_code);		   \
+			*node = OpNew(data);								   \
 		}
 
-	#define DEF_EXPR_CMD(cmd_name, str_command, cmd_code, ...) \
-															   \
-        else if (strcmp(str_elem, #str_command) == 0){         \
-			ExprElem data = CreateExprCommand(cmd_code);       \
-			*node = OpNew(data);                               \
-		}
+		#include "def_expr_cmd.h"
+		#undef DEF_EXPR_CMD
 
-	#include "def_expr_cmd.h"
-	#undef DEF_EXPR_CMD
 		else {
 			ExprElem data = CreateExprVar(str_elem);
 			*node = OpNew(data);
@@ -100,18 +99,18 @@ static int DeleteCloseBracket(char* str) {
 
 	sscanf(str, " %c %n", &symbol, &end_read_size);
 
-	if (symbol == ')') {
-		return end_read_size;
-	}
+	if (symbol == ')') return end_read_size;
 
 	return 0;
 }
 
-#define MoveStr(num) \
-	res_size += num; \
+#define MoveStr(num)														 \
+																			 \
+	res_size += num;														 \
 	str      += num;   
 
 #define ReadChild(child_name)                                                \
+																			 \
 	symbol = {};                                                             \
 	open_bracket_size = 0;                                                   \
 	sscanf(str, " %c %n", &symbol, &open_bracket_size);                      \
@@ -196,8 +195,8 @@ Node* CreateVarNode(ExprVar var, Node* left, Node* right) {
 static int CommandPriority(int cmd_code) {
 
 	switch (cmd_code) {
-		#define DEF_EXPR_CMD(cmd_name, command, cmd_code, priority, ...) \
-			case cmd_code:                                               \
+		#define DEF_EXPR_CMD(cmd_name, command, cmd_code, priority, ...)  \
+			case cmd_code:                                                \
 				return priority;        
 		#include "def_expr_cmd.h"
 		#undef DEF_EXPR_CMD
@@ -222,8 +221,12 @@ static bool isNeedBrackets(Node* child, Node* parent) {
 	assert(child != nullptr);
 
 	if (parent == nullptr ||
-		CommandPriority(NODE_CMD_CODE(child)) <= CommandPriority(NODE_CMD_CODE(parent)))
+		CommandPriority(NODE_CMD_CODE(child)) <= CommandPriority(NODE_CMD_CODE(parent))) {
+
 		return false;
+
+	}
+		
 
 	return true;
 }
@@ -286,6 +289,7 @@ void PrintTreeExpr(Tree* tree, FILE* stream) {
 }
 
 bool isEqualVar(ExprVar var1, ExprVar var2) {
+
 	return strcmp(var1.name, var2.name) == 0;
 }
 

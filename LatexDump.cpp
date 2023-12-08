@@ -1,6 +1,7 @@
 #include "LatexDump.h"
 
 static int CommandPriority(int cmd_code) {
+
 	switch (cmd_code) {
 		#define DEF_EXPR_CMD(cmd_name, command, cmd_code, priority, ...) \
 			case cmd_code:                                               \
@@ -8,11 +9,14 @@ static int CommandPriority(int cmd_code) {
 		#include "def_expr_cmd.h"
 		#undef DEF_EXPR_CMD
 	}
+	
+	return -1;
 }
 
 bool isNeedBrackets(const Node* child, const Node* parent) {
 
 	assert(child != nullptr);
+	VerifyNode(child);
 
 	if (parent == nullptr ||
 		CommandPriority(NODE_CMD_CODE(child)) <= CommandPriority(NODE_CMD_CODE(parent)))
@@ -24,6 +28,7 @@ bool isNeedBrackets(const Node* child, const Node* parent) {
 bool isSqrtExpr(const Node* node) {
 
 	assert(node != nullptr);
+	VerifyNode(node);
 
 	if (node->right->data.type == COMMAND &&
 		NODE_CMD_CODE(node) == DIV &&
@@ -37,12 +42,14 @@ bool isSqrtExpr(const Node* node) {
 }
 
 bool isIntValue(double num) {
+
 	return (num - (int)num < EPSILON) ? true : false;
 }
 
 void CreateExprSchedule(Tree* first_tree, Tree* second_tree, ExprVar var, const char* schedule_name) {
 
 	assert(first_tree != nullptr);
+	TreeVerify(first_tree);
 
 	FILE* python_file = fopen("shedule.py", "w");
 
@@ -61,7 +68,11 @@ void CreateExprSchedule(Tree* first_tree, Tree* second_tree, ExprVar var, const 
 	fprintf(python_file, "\"\n");
 	fprintf(python_file, "expr_1 = sp.sympify(str_expr_1)\n");
 	fprintf(python_file, "f_1 = sp.lambdify(%s, expr_1, modules=[\"numpy\"])\n\n", var.name);
+
 	if (second_tree != nullptr) {
+
+		TreeVerify(second_tree);
+
 		fprintf(python_file, "str_expr_2 = \"");
 
 		PrintTreeExpr(second_tree, python_file);
@@ -79,8 +90,10 @@ void CreateExprSchedule(Tree* first_tree, Tree* second_tree, ExprVar var, const 
 
 	fprintf(python_file, "plt.figure(figsize=(8, 6))\n");
 	fprintf(python_file, "plt.plot(y_vals, result_1, label=str_expr_1)\n");
+
 	if (second_tree != nullptr)
 		fprintf(python_file, "plt.plot(y_vals, result_2, label=str_expr_2)\n");
+
 	fprintf(python_file, "plt.xlabel('%s')\n", var.name);
 	fprintf(python_file, "plt.ylabel('f(%s)')\n", var.name);
 	fprintf(python_file, "plt.title('RUZAL DIFFERENCIATOR')\n");
@@ -94,6 +107,11 @@ void CreateExprSchedule(Tree* first_tree, Tree* second_tree, ExprVar var, const 
 }
 
 void AddImageLatex(Tree* tree, const char* image_name) {
+
+	TreeVerify(tree);
+
+	fprintf(tree->latex_logfile, "\\newpage\n");
+
 	fprintf(tree->latex_logfile, "\\begin{figure} [!ht]\n");
 	fprintf(tree->latex_logfile, "\\begin{flushleft}\n");
 	fprintf(tree->latex_logfile, "\\includegraphics[scale = %lf]{%s}\n", IMAGE_SCALE, image_name);
@@ -104,6 +122,7 @@ void AddImageLatex(Tree* tree, const char* image_name) {
 void PrintLatexNode(const Node* child, const Node* parent, FILE* file) {
 
 	assert(child != nullptr);
+	VerifyNode(child);
 
 	if (child->data.type == VAR) {
 		fprintf(file, "%s", NODE_VAR_NAME(child));
@@ -127,12 +146,13 @@ void PrintLatexNode(const Node* child, const Node* parent, FILE* file) {
 			fprintf(file, " ( ");
 
 		switch (NODE_CMD_CODE(child)) {
+
 		#define DEF_EXPR_CMD(command_name, command_str, int_code, priority, args_num, handle, diff, ...) \
 		case command_name:																				 \
 			__VA_ARGS__																	                 \
 			break;
 		#include "def_expr_cmd.h"
-		
+
 		}
 
 		if (is_need_brackets)
@@ -143,6 +163,7 @@ void PrintLatexNode(const Node* child, const Node* parent, FILE* file) {
 void PrintLatexExpr(const Node* node, FILE* latex_logfile) {
 
 	assert(node != nullptr);
+	VerifyNode(node);
 
 	FileInfo phrases_file = FileInfoCtor("MathStandartPhrases.txt");
 

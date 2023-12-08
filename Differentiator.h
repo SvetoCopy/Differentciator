@@ -4,7 +4,7 @@
 #include <math.h>
 #include <cstdlib>
 #include "LatexDump.h"
-
+// #include "TXLib.h"
 
 #define _ADD(left, ...)	CreateCommandNode(ADD, left, __VA_ARGS__)
 #define _SUB(left, ...) CreateCommandNode(SUB, left, __VA_ARGS__) 
@@ -14,7 +14,6 @@
 #define _LOG(left, ...) CreateCommandNode(LOG, left, __VA_ARGS__)
 #define _COS(left)      CreateCommandNode(COS, left, nullptr)
 #define _SIN(left)      CreateCommandNode(SIN, left, nullptr)
-
 #define _IMM(num)		CreateImmNode(num, nullptr, nullptr)
 
 #define DIFF_EXPR(node, var) DiffExprNode(node, var, latex_logfile)
@@ -32,8 +31,6 @@ enum ExprCommands {
 };
 
 void SetVarInNode(Node* node, ExprVar var, double point);
-
-void ExpressionOptimization(Tree* tree);
 
 double LogBase(double num, double base);
 double Eval(const Node* node);

@@ -14,7 +14,7 @@ void OpDelete(Node* node) {
 }
 
 void _NodeDtor(Node* node, const char* file, size_t line, const char* func) {
-	printf("%s : line %zu func: %s\n", file, line, func);
+	//printf("%s : line %zu func: %s\n", file, line, func);
 
 	if (node == nullptr)
 		return;
@@ -122,6 +122,7 @@ void TreeVerify(Tree* tree) {
 }
 
 Node* CopyNode(const Node* node) {
+
 	if (node == nullptr) return nullptr;
 
 	Node* res = OpNew(node->data);
