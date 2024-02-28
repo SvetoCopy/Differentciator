@@ -43,3 +43,27 @@
 |<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/8bdd6747-d15e-4a2e-9d80-9760b75c97b8" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/e41faefc-0aef-4d7a-a8b7-ded67cd89740" width="200" height="178"> |
 
 <h2>Как выглядит результат?</h2>
+Результат выписывается в виде Latex файла, в котором присутствуют:
+<ul>
+ <li>Все стадии оптимизации дерева, подкрепленные стандартными математическими фразами</li>
+ <li>График изначальной функции и разложения в ряд Тейлора</li>
+ <li>График изначальной функции и касательной к ней в точке 0</li>
+</ul>
+<p>Рассмотрим <b>пример</b> работы программы для функции f(x) = sin(x) + cos(x^2)</p>
+
+<p>Процесс оптимизации:</p>
+
+![image](https://github.com/SvetoCopy/Differentiator/assets/65361271/5679f521-c8f1-4b8b-852c-fb1ec5e888f0)
+
+<p>Результат дифференцирования:</p>
+
+![image](https://github.com/SvetoCopy/Differentiator/assets/65361271/7e790cc7-5f1f-4ecb-a2bd-800b4d456d3a)
+
+<p>График Тейлора:</p>
+
+![taylor](https://github.com/SvetoCopy/Differentiator/assets/65361271/7ecc60c4-da9b-4de9-b68e-d023f4050502)
+
+<p>График касательной:</p>
+
+![tangent](https://github.com/SvetoCopy/Differentiator/assets/65361271/a28a13ae-1991-4592-a086-53861ff8f637)
+
