@@ -4,7 +4,6 @@
 #include <math.h>
 #include <cstdlib>
 #include "LatexDump.h"
-// #include "TXLib.h"
 
 #define _ADD(left, ...)	CreateCommandNode(ADD, left, __VA_ARGS__)
 #define _SUB(left, ...) CreateCommandNode(SUB, left, __VA_ARGS__) 
@@ -14,13 +13,13 @@
 #define _LOG(left, ...) CreateCommandNode(LOG, left, __VA_ARGS__)
 #define _COS(left)      CreateCommandNode(COS, left, nullptr)
 #define _SIN(left)      CreateCommandNode(SIN, left, nullptr)
-#define _IMM(num)		CreateImmNode(num, nullptr, nullptr)
+#define _IMM(num)	CreateImmNode(num, nullptr, nullptr)
 
 #define DIFF_EXPR(node, var) DiffExprNode(node, var, latex_logfile)
 
-const int	 MAX_TEYLOR_LEN = 5;
-const double EXP			= 2.72;
-const double EPSILON		= 0.01;
+const int    MAX_TEYLOR_LEN = 5;
+const double EXP	    = 2.72;
+const double EPSILON	    = 0.01;
 
 enum ExprCommands {
 	#define DEF_EXPR_CMD(cmd_name, command, code, priority, handle, ...) cmd_name = code,
