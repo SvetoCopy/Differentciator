@@ -32,15 +32,15 @@
 
 | Было | Стало |
 |------|-------|
-|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/e1196126-79fe-49dc-b551-9078fbafe3f4" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/fd7e9edd-3c7f-4a25-8cd7-d3cf6393da19" width="200" height="185"> |
-|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/f9bc833a-650e-472c-83b8-0d87f523edbb" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/e41faefc-0aef-4d7a-a8b7-ded67cd89740" width="200" height="178"> |
-|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/639af879-baa6-4bdc-a1d7-4da900a88694" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/e41faefc-0aef-4d7a-a8b7-ded67cd89740" width="200" height="178"> |
-|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/b32d4a0a-59fb-456e-af5d-d53b5085ff72" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/e41faefc-0aef-4d7a-a8b7-ded67cd89740" width="200" height="178"> |
-|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/54f9bd90-51f9-4b19-9b5f-c66fae89534e" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/5ff7f64c-fd7f-4c79-9684-ca343b786569" width="200" height="178"> |
-|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/0ebb9a62-f355-4bd1-be8a-2e443cefd2f1" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/8bd89e42-0916-4e50-ac24-281f26ba9814" width="200" height="178"> |
-|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/d1ca9ce3-fb85-45ab-a0c6-3be97ad496e3" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/8bd89e42-0916-4e50-ac24-281f26ba9814" width="200" height="178"> |
-|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/f03a827f-6d44-4880-ba02-5e94f540bc16" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/e41faefc-0aef-4d7a-a8b7-ded67cd89740" width="200" height="178"> |
-|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/8bdd6747-d15e-4a2e-9d80-9760b75c97b8" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/e41faefc-0aef-4d7a-a8b7-ded67cd89740" width="200" height="178"> |
+|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/0c110352-ccff-4eb0-8722-a0b9f4fda61c" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/8c2a302b-203f-4896-a18d-f48c0d3e1cea" width="200" height="178"> |
+|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/df2dd2e1-6d4f-45ec-8944-fa3df2e5b654" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/921aad47-2dd8-488a-9609-929b0739b928" width="200" height="178"> |
+|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/6456d0da-1cd8-4e91-86a5-6ad3df1c3dd6" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/605828db-188e-4922-b98a-ea0347e71e07" width="200" height="178"> |
+|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/5216871d-0940-4140-a98e-52e03a8b35e0" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/605828db-188e-4922-b98a-ea0347e71e07" width="200" height="178"> |
+|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/e0148626-df6e-46c7-9ce9-c4f605ed9435" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/8c2a302b-203f-4896-a18d-f48c0d3e1cea" width="200" height="178"> |
+|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/835ab379-e930-41e6-bb60-1e1f9d98ef5c" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/0bddd955-8904-4372-855d-21758c7ea54f" width="200" height="178"> |
+|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/9c61b412-5526-4313-ae81-f42eccfcd7c5" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/0bddd955-8904-4372-855d-21758c7ea54f" width="200" height="178"> |
+|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/852d386f-363f-4f72-88d1-14216f8fe228" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/921aad47-2dd8-488a-9609-929b0739b928" width="200" height="178"> |
+|<img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/51afd554-2f9c-4d66-9eb7-5a3ca68d1e04" width="200" height="178"> | <img src="https://github.com/SvetoCopy/Differentiator/assets/65361271/605828db-188e-4922-b98a-ea0347e71e07" width="200" height="178"> |
 
 <h2>Как выглядит результат?</h2>
 Результат выписывается в виде Latex файла, в котором присутствуют:
@@ -64,7 +64,7 @@
 
 ![taylor](https://github.com/SvetoCopy/Differentiator/assets/65361271/7ecc60c4-da9b-4de9-b68e-d023f4050502)
 
-<p>График касательной:</p>
+<p>График функции и график касательной в точке 0:</p>
 
 ![tangent](https://github.com/SvetoCopy/Differentiator/assets/65361271/a28a13ae-1991-4592-a086-53861ff8f637)
 
