@@ -24,6 +24,7 @@
 
 #define PRINT_LATEX_LEFT  PrintLatexNode(child->left, child, file);
 #define PRINT_LATEX_RIGHT PrintLatexNode(child->right, child, file);
+
 const int	 MAX_TAYLOR_LEN = 5;
 const double EXP			= 2.72;
 const double EPSILON		= 0.01;
