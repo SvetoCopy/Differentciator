@@ -1,57 +1,6 @@
 #include "TreeRead.h"
 
-int ExprElemCtor(ExprElem* expr_elem, ExprElemType type, Value_t data) {
-
-	assert(expr_elem);
-
-	expr_elem->value = data;
-	expr_elem->type = type;
-
-	return 0;
-}
-
-ExprElem CreateExprCommand(int cmd_code) {
-
-	ExprElem expr_elem = {};
-
-	Value_t value = {};
-	value.command_type = cmd_code;
-
-	ExprElemCtor(&expr_elem, COMMAND, value);
-
-	return expr_elem;
-}
-
-ExprElem CreateExprImm(double double_elem) {
-
-	ExprElem data = {};
-
-	Value_t value = {};
-	value.imm_value = double_elem;
-
-	ExprElemCtor(&data, NUM, value);
-
-	return data;
-}
-
-ExprElem CreateExprVar(char* name) {
-
-	assert(name != nullptr);
-
-	ExprElem data = {};
-
-	Value_t value = {};
-
-	value.var.name = _strdup(name);
-	value.var.imm_value = 0;
-
-	data.value = value;
-	ExprElemCtor(&data, VAR, value);
-
-	return data;
-}
-
-int ReadExprElem(char* str, Node** node) {
+int ReadExprElem(const char* str, Node** node) {
 
 	assert(str != nullptr);
 
@@ -90,7 +39,7 @@ int ReadExprElem(char* str, Node** node) {
 	return elem_read_size;
 }
 
-static int DeleteCloseBracket(char* str) {
+static int DeleteCloseBracket(const char* str) {
 
 	assert(str != nullptr);
 
@@ -126,7 +75,7 @@ static int DeleteCloseBracket(char* str) {
 	close_bracket_size = DeleteCloseBracket(str);                            \
 	MoveStr(close_bracket_size);                 
 
-int ReadNodeIN(char* str, Node** res) {
+int ReadNodeIN(const char* str, Node** res) {
 
 	assert(str != nullptr);
 
@@ -152,156 +101,4 @@ int ReadNodeIN(char* str, Node** res) {
 	(*res)->right = right;
 
 	return res_size;
-}
-
-Node* CreateCommandNode(int command_code, Node* left, Node* right) {
-
-	Node* res = OpNew(CreateExprCommand(command_code));
-
-	res->left = left;
-	res->right = right;
-
-	return res;
-}
-
-Node* CreateImmNode(double imm_value, Node* left, Node* right) {
-
-	Node* res = OpNew(CreateExprImm(imm_value));
-
-	res->left = left;
-	res->right = right;
-
-	return res;
-}
-
-Node* CreateVarNode(ExprVar var, Node* left, Node* right) {
-
-	ExprElem data = {};
-
-	Value_t value = {};
-	value.var = var;
-
-	data.value = value;
-	ExprElemCtor(&data, VAR, value);
-
-	Node* res = OpNew(data);
-
-	res->left = left;
-	res->right = right;
-
-	return res;
-}
-
-static int CommandPriority(int cmd_code) {
-
-	switch (cmd_code) {
-		#define DEF_EXPR_CMD(cmd_name, command, cmd_code, priority, ...)  \
-			case cmd_code:                                                \
-				return priority;        
-		#include "def_expr_cmd.h"
-		#undef DEF_EXPR_CMD
-	}
-}
-
-void PrintCommand(int cmd_code, FILE* stream) {
-
-	switch (cmd_code) {
-		#define DEF_EXPR_CMD(cmd_name, command, cmd_code, priority, ...)  \
-			case cmd_code: {                                              \
-				fprintf(stream, " " #command " ");                        \
-				break;                                                    \
-			}
-		#include "def_expr_cmd.h"
-		#undef DEF_EXPR_CMD
-	}
-}
-
-static bool isNeedBrackets(Node* child, Node* parent) {
-
-	assert(child != nullptr);
-
-	if (parent == nullptr ||
-		CommandPriority(NODE_CMD_CODE(child)) <= CommandPriority(NODE_CMD_CODE(parent))) {
-
-		return false;
-
-	}
-		
-
-	return true;
-}
-
-static int GetCommandArgsNum(Node* node) {
-
-	assert(node != nullptr);
-
-	#define DEF_EXPR_CMD(cmd_name, command, cmd_code, priority, args_num, ...)  \
-				if (node->data.value.command_type == cmd_code) {                \
-					return args_num;                                            \
-				}
-	#include "def_expr_cmd.h"
-	#undef DEF_EXPR_CMD
-}
-
-void PrintNodeExpr(Node* child, Node* parent, FILE* stream) {
-
-	assert(child != nullptr);
-
-	if (child->data.type == VAR) {
-		fprintf(stream, "%s", NODE_VAR_NAME(child));
-		return;
-	}
-	if (child->data.type == NUM) {
-		fprintf(stream, "%.2lf", NODE_IMM_VALUE(child));
-		return;
-	}
-	if (child->data.type == COMMAND) {
-		int args_num = GetCommandArgsNum(child);
-		if (args_num == 1) {
-			PrintCommand(NODE_CMD_CODE(child), stream);
-
-			fprintf(stream, " ( ");
-			PrintNodeExpr(child->left, child, stream);
-			fprintf(stream, " ) ");
-
-			return;
-		}
-
-		bool is_need_brackets = isNeedBrackets(child, parent);
-
-		if (is_need_brackets)
-			fprintf(stream, " ( ");
-
-		PrintNodeExpr(child->left, child, stream);
-		PrintCommand(NODE_CMD_CODE(child), stream);
-		PrintNodeExpr(child->right, child, stream);
-
-		if (is_need_brackets)
-			fprintf(stream, " ) ");
-	}
-}
-
-void PrintTreeExpr(Tree* tree, FILE* stream) {
-
-	TreeVerify(tree);
-
-	PrintNodeExpr(tree->root, nullptr, stream);
-}
-
-bool isEqualVar(ExprVar var1, ExprVar var2) {
-
-	return strcmp(var1.name, var2.name) == 0;
-}
-
-bool ÑheckVarInNode(Node* node, ExprVar var) {
-
-	VerifyNode(node);
-
-	if (node == nullptr) return false;
-	if (node->data.type == VAR) return isEqualVar(node->data.value.var, var);
-
-	if (ÑheckVarInNode(node->left, var)) return true;
-	if (ÑheckVarInNode(node->right, var)) return true;
-
-	return false;
 }

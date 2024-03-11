@@ -4,7 +4,6 @@
 #include <math.h>
 #include <cstdlib>
 #include "LatexDump.h"
-// #include "TXLib.h"
 
 #define _ADD(left, ...)	CreateCommandNode(ADD, left, __VA_ARGS__)
 #define _SUB(left, ...) CreateCommandNode(SUB, left, __VA_ARGS__) 
@@ -18,7 +17,14 @@
 
 #define DIFF_EXPR(node, var) DiffExprNode(node, var, latex_logfile)
 
-const int	 MAX_TEYLOR_LEN = 5;
+#define DIFF_COMPOSITION_FUNC(expr) _MUL(expr, DIFF_EXPR(LEFT, diff_var))
+
+#define LEFT  node->left
+#define RIGHT node->right
+
+#define PRINT_LATEX_LEFT  PrintLatexNode(child->left, child, file);
+#define PRINT_LATEX_RIGHT PrintLatexNode(child->right, child, file);
+const int	 MAX_TAYLOR_LEN = 5;
 const double EXP			= 2.72;
 const double EPSILON		= 0.01;
 
@@ -35,8 +41,8 @@ void SetVarInNode(Node* node, ExprVar var, double point);
 double LogBase(double num, double base);
 double Eval(const Node* node);
 
-Node* Factorial(double value);
-void TeylorExpr(Tree* expr, ExprVar var, double point);
+int Factorial(int num);
+void TaylorExpr(Tree* expr, ExprVar var, double point);
 void GetTangentInPoint(Tree* tree, ExprVar diff_var, double point);
 
 void  DiffExprNTimes(int N, Tree* tree, ExprVar diff_var);

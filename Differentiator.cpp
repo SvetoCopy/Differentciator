@@ -8,12 +8,15 @@ double LogBase(double num, double base)
 
 double Eval(const Node* node) {
 	
-	VerifyNode(node);
+	if (VerifyNode(node) == NODE_ERROR) 
+		assert(!"Verifier failed in Eval");;
 
 	if (!node) 
 		return 0;
+	
 	if (node->data.type == VAR)
 		return NODE_VAR_VALUE(node);
+	
 	if (node->data.type == NUM)
 		return NODE_IMM_VALUE(node);
 
@@ -37,7 +40,7 @@ double Eval(const Node* node) {
 
 void GetTangentInPoint(Tree* tree, ExprVar diff_var, double point) {
 
-	TreeVerify(tree);
+	if (TreeVerify(tree) == TREE_ERROR) return;
 
 	double f_value_in_point = 0;
 	SetVarInNode(tree->root, diff_var, point);
@@ -46,6 +49,7 @@ void GetTangentInPoint(Tree* tree, ExprVar diff_var, double point) {
 	DiffExprTree(tree, diff_var);
 	SetVarInNode(tree->root, diff_var, point);
 
+	// y = f'(x0)*(x - õ0) + f(x0) 
 	tree->root = _ADD(
 					 _MUL(
 						 _IMM(Eval(tree->root)),
@@ -57,7 +61,7 @@ void GetTangentInPoint(Tree* tree, ExprVar diff_var, double point) {
 
 void DiffExprTree(Tree* tree, ExprVar diff_var) {
 
-	TreeVerify(tree);
+	if (TreeVerify(tree) == TREE_ERROR) return;
 
 	PrintLatexExpr(tree->root, tree->latex_logfile);
 
@@ -65,6 +69,7 @@ void DiffExprTree(Tree* tree, ExprVar diff_var) {
 	NodeDtor(tree->root);
 
 	tree->root = tmp;
+	ExpressionOptimization(tree);
 
 	PrintLatexExpr(tree->root, tree->latex_logfile);
 
@@ -73,7 +78,7 @@ void DiffExprTree(Tree* tree, ExprVar diff_var) {
 Node* DiffExprNode(Node* node, ExprVar diff_var, FILE* latex_logfile) {
 
 	assert(node != nullptr);
-	VerifyNode(node);
+	if (VerifyNode(node) == NODE_ERROR) assert(!"Ìerifier failed in DiffExprNode");
 	
 	Node* new_node = {};
 
@@ -88,7 +93,6 @@ Node* DiffExprNode(Node* node, ExprVar diff_var, FILE* latex_logfile) {
 	else if (node->data.type == VAR && isEqualVar(node->data.value.var, diff_var)) {
 		new_node = CreateImmNode(1, nullptr, nullptr);
 	}
-
 	else {
 		switch (NODE_CMD_CODE(node)) {
 		#define DEF_EXPR_CMD(command_name, command_str, int_code, priority, args_num, handle, diff, ...)\
@@ -107,27 +111,24 @@ Node* DiffExprNode(Node* node, ExprVar diff_var, FILE* latex_logfile) {
 
 void DiffExprNTimes(int N, Tree* tree, ExprVar diff_var) {
 
-	TreeVerify(tree);
+	if (TreeVerify(tree) == TREE_ERROR) return;
 
 	for (int i = 0; i < N; i++) {
 		DiffExprTree(tree, diff_var);
 	}
 }
 
-Node* Factorial(double value) {
+int Factorial(int num) {
 
-	Node* node_var = _IMM(1);
+	if (num == 1 || num == 0)
+		return 1;
 
-	for (int i = 2; i <= value; i++) {
-		node_var = _MUL(node_var, _IMM(i));
-	}
-
-	return node_var;
+	return num * Factorial(num - 1);
 }
 
 void SetVarInNode(Node* node, ExprVar var, double point) {
 
-	VerifyNode(node);
+	if (VerifyNode(node) == NODE_ERROR) return;
 
 	if (node == nullptr) return;
 
@@ -138,13 +139,14 @@ void SetVarInNode(Node* node, ExprVar var, double point) {
 	SetVarInNode(node->right, var, point);
 }
 
-void TeylorExpr(Tree* expr, ExprVar var, double point) {
+void TaylorExpr(Tree* expr, ExprVar var, double point) {
 
-	TreeVerify(expr);
+	if (TreeVerify(expr) == TREE_ERROR) return;
 
 	Node* res = _IMM(0);
 	Tree tree_diff = *expr;
-	for (int i = 0; i < MAX_TEYLOR_LEN; i++) {
+
+	for (int i = 0; i < MAX_TAYLOR_LEN; i++) {
 
 		tree_diff.root = CopyNode(expr->root);
 
@@ -152,6 +154,8 @@ void TeylorExpr(Tree* expr, ExprVar var, double point) {
 		ExpressionOptimization(&tree_diff);
 		SetVarInNode(tree_diff.root, var, point);
 
+		//         (n)              n
+		// res += (f (x0)/n!)*(x-x0)
 		res =  _ADD(
 					res,
 					_DIV(
@@ -165,7 +169,7 @@ void TeylorExpr(Tree* expr, ExprVar var, double point) {
 								_IMM(i)
 								)
 							),
-						Factorial(i)
+						_IMM(Factorial(i))
 						)
 					);
 	}

@@ -16,21 +16,23 @@ bool isEqual(double first, double second) {
 		(*node)->left->data.type == NUM &&             \
 		isEqual(NODE_IMM_VALUE((*node)->left), 0)	   \
 
-#define REPLACE_TO_LEFT_NODE(node)					   \
+#define MOVE_TO_LEFT_NODE(node)						   \
 		Node* tmp = CopyNode((*node)->left);		   \
 													   \
 		NodeDtor(*node);							   \
 		*node = tmp;
 
-#define REPLACE_TO_RIGHT_NODE(node)				   	   \
+#define MOVE_TO_RIGHT_NODE(node)				   	   \
 		Node* tmp = CopyNode((*node)->right);		   \
 													   \
 		NodeDtor(*node);							   \
 		*node = tmp;
 
-#define REPLACE_TO_IMM_NODE(node, value)			   \
+#define MOVE_TO_IMM_NODE(node, value)				   \
 		NodeDtor(*node);							   \
 		*node = CreateImmNode(value, nullptr, nullptr);
+
+#define TREE_CHANGED (*count_diff)++
 
 void MulNDivOptimization(Node** node, int* count_diff) {
 
@@ -38,22 +40,22 @@ void MulNDivOptimization(Node** node, int* count_diff) {
 
 	if (CHECK_CMD(MUL) && (CHECK_RIGHT_NUM(0) || CHECK_LEFT_NUM(0)))
 	{
-		(*count_diff)++;
-		REPLACE_TO_IMM_NODE(node, 0);
+		TREE_CHANGED;
+		MOVE_TO_IMM_NODE(node, 0);
 	}
 
 	else if (CHECK_CMD(MUL) || CHECK_CMD(DIV))
 	{
 		if (CHECK_RIGHT_NUM(1))
 		{
-			(*count_diff)++;
-			REPLACE_TO_LEFT_NODE(node);
+			TREE_CHANGED;
+			MOVE_TO_LEFT_NODE(node);
 		}
 
 		else if (CHECK_CMD(MUL) && CHECK_LEFT_NUM(1))
 		{
-			(*count_diff)++;
-			REPLACE_TO_RIGHT_NODE(node);
+			TREE_CHANGED;
+			MOVE_TO_RIGHT_NODE(node);
 		}
 	}
 }
@@ -63,22 +65,23 @@ void PowOptimization(Node** node, int* count_diff) {
 	VerifyNode(*node);
 
 	if (CHECK_CMD(POW)) {
+
 		if (CHECK_RIGHT_NUM(0) || CHECK_LEFT_NUM(1))
 		{
-			(*count_diff)++;
-			REPLACE_TO_IMM_NODE(node, 1);
+			TREE_CHANGED;
+			MOVE_TO_IMM_NODE(node, 1);
 		}
 
 		else if (CHECK_RIGHT_NUM(1))
 		{
-			(*count_diff)++;
-			REPLACE_TO_LEFT_NODE(node);
+			TREE_CHANGED;
+			MOVE_TO_LEFT_NODE(node);
 		}
 
 		else if (CHECK_LEFT_NUM(0))
 		{
-			(*count_diff)++;
-			REPLACE_TO_IMM_NODE(node, 0);
+			TREE_CHANGED;
+			MOVE_TO_IMM_NODE(node, 0);
 		}
 	}
 }
@@ -91,19 +94,19 @@ void AddNSubOptimization(Node** node, int* count_diff) {
 	{
 		if (CHECK_RIGHT_NUM(0))
 		{
-			(*count_diff)++;
-			REPLACE_TO_LEFT_NODE(node);
+			TREE_CHANGED;
+			MOVE_TO_LEFT_NODE(node);
 		}
 
-		else if ((*node)->left->data.type == NUM && isEqual((*node)->left->data.value.imm_value, 0))
+		else if (CHECK_LEFT_NUM(0) && CHECK_CMD(ADD))
 		{
-			(*count_diff)++;
-			REPLACE_TO_RIGHT_NODE(node)
+			TREE_CHANGED;
+			MOVE_TO_RIGHT_NODE(node)
 		}
 	}
 }
 
-void SecondNodeOptimization(Node** node, int* count_diff) {
+void SecondPassOptimization(Node** node, int* count_diff) {
 
 	VerifyNode(*node);
 
@@ -122,11 +125,11 @@ void SecondNodeOptimization(Node** node, int* count_diff) {
 	AddNSubOptimization(node, &count);
 	if (count != 0) *count_diff += count;
 
-	SecondNodeOptimization(&(*node)->left, count_diff);
-	SecondNodeOptimization(&(*node)->right, count_diff);
+	SecondPassOptimization(&(*node)->left, count_diff);
+	SecondPassOptimization(&(*node)->right, count_diff);
 }
 
-void FirstNodeOptimization(Node** node, int* count_diff) {
+void FirstPassOptimization(Node** node, int* count_diff) {
 
 	VerifyNode(*node);
 
@@ -144,8 +147,8 @@ void FirstNodeOptimization(Node** node, int* count_diff) {
 		*node = CreateImmNode(value, nullptr, nullptr);
 	}
 	else {
-		FirstNodeOptimization(&(*node)->left, count_diff);
-		FirstNodeOptimization(&(*node)->right, count_diff);
+		FirstPassOptimization(&(*node)->left, count_diff);
+		FirstPassOptimization(&(*node)->right, count_diff);
 	}
 }
 
@@ -157,8 +160,9 @@ void ExpressionOptimization(Tree* tree) {
 
 	do {
 		count_diff = 0;
-		FirstNodeOptimization(&tree->root, &count_diff);
-		SecondNodeOptimization(&tree->root, &count_diff);
+
+		FirstPassOptimization(&tree->root, &count_diff);
+		SecondPassOptimization(&tree->root, &count_diff);
 
 	} while (count_diff != 0);
 }

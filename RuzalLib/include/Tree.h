@@ -8,6 +8,12 @@
 #include <string.h>
 
 const int TREE_ERROR = -1;
+const int NODE_ERROR = -1;
+
+#define NODE_IMM_VALUE(node) node->data.value.imm_value
+#define NODE_CMD_CODE(node)  node->data.value.command_type
+#define NODE_VAR_VALUE(node) node->data.value.var.imm_value
+#define NODE_VAR_NAME(node)  node->data.value.var.name
 
 enum ExprElemType {
 	NUM = 0,
@@ -18,7 +24,7 @@ enum ExprElemType {
 
 struct ExprVar {
 	const char* name;
-	double imm_value;
+	double      imm_value;
 };
 
 union Value_t {
@@ -32,10 +38,10 @@ struct ExprElem {
 	Value_t      value;
 };
 
-typedef ExprElem NodeInfo_t;
+typedef ExprElem NodeData_t;
 
 struct Node {
-	NodeInfo_t data;
+	NodeData_t data;
 	Node*      left;
 	Node*      right;
 };
@@ -47,18 +53,28 @@ struct Tree {
 	FILE*  latex_logfile;
 };
 
-Node* OpNew(NodeInfo_t data);
+Node* OpNew(NodeData_t data);
 void  OpDelete(Node* node);
+
 Node* CopyNode(const Node* node);
+void  NodeDtor(Node* node);
 
-void _NodeDtor(Node* node, const char* file, size_t line, const char* func);
+void TreeCtor(Tree* tree, const char* graph_logfile_name, NodeData_t start_data, const char* latex_file_name);
+void TreeDtor(Tree* tree);
+int  TreeVerify(Tree* tree);
 
-#define NodeDtor(node) _NodeDtor(node, __FILE__, __LINE__, __FUNCTION__)
+int  VerifyNode(const Node* node);
 
-int TreeCtor(Tree* tree, const char* graph_logfile_name, NodeInfo_t start_data, const char* latex_file_name);
-int TreeDtor(Tree* tree);
-void TreeVerify(Tree* tree);
+bool ÑheckVarInSubTree(Node* node, ExprVar var);
 
-void VerifyNode(const Node* node);
+Node* CreateCommandNode(int command_code, Node* left, Node* right);
+Node* CreateImmNode(double imm_value, Node* left, Node* right);
+Node* CreateVarNode(ExprVar var, Node* left, Node* right);
 
+ExprElem CreateExprCommand(int cmd_code);
+ExprElem CreateExprImm(double double_elem);
+ExprElem CreateExprVar(char* name);
+
+void PrintTreeExpr(Tree* tree, FILE* stream);
+bool isEqualVar(ExprVar var1, ExprVar var2);
 #endif // !TREE_DED

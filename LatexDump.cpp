@@ -1,5 +1,27 @@
 #include "LatexDump.h"
 
+void PrintLatexPackages(FILE* latex_file) {
+	fprintf(latex_file,
+		"\\documentclass[a4paper, 12pt]{article}\n"
+		"\\usepackage[T2A]{ fontenc }\n"
+		"\\usepackage[utf8]{ inputenc }\n"
+		"\\usepackage[english, russian]{babel}\n"
+		"\\usepackage{amsmath,amsfonts,amssymb,amsthm,mathtools}\n"
+		"\\usepackage[colorlinks, linkcolor = blue]{hyperref}\n"
+		"\\usepackage{upgreek}\n"
+		"\\usepackage[left = 2cm, right = 2cm, top = 2cm, bottom = 3cm, bindingoffset = 0cm]{geometry}\n"
+		"\\usepackage{graphicx}\n"
+		"\\usepackage{multirow}\n"
+		"\\usepackage{xcolor}\n"
+		"\\usepackage{tabularx}\n"
+		"\\title{ Differenciator }\n"
+		"\\author{Valiev Ruzal}\n"
+		"\\date{December 2023}\n"
+		"\\begin{document}\n"
+		"\\maketitle\n"
+		"\\section{Expression}\n");
+}
+
 static int CommandPriority(int cmd_code) {
 
 	switch (cmd_code) {
@@ -46,28 +68,30 @@ bool isIntValue(double num) {
 	return (num - (int)num < EPSILON) ? true : false;
 }
 
-void CreateExprSchedule(Tree* first_tree, Tree* second_tree, ExprVar var, const char* schedule_name) {
+void CreateExprGraph(Tree* first_tree, Tree* second_tree, ExprVar var, const char* graph_name) {
 
 	assert(first_tree != nullptr);
 	TreeVerify(first_tree);
 
-	FILE* python_file = fopen("shedule.py", "w");
+	FILE* python_file = fopen("graph.py", "w");
 
 	assert(python_file != nullptr);
 
-	fprintf(python_file, "# -*- coding: utf-8 -*-\n");
-	fprintf(python_file, "import sympy as sp\n");
-	fprintf(python_file, "import matplotlib.pyplot as plt\n");
-	fprintf(python_file, "import numpy as np\n\n");
+	fprintf(python_file, "# -*- coding: utf-8 -*-\n"
+						 "import sympy as sp\n"
+						 "import matplotlib.pyplot as plt\n"
+						 "import numpy as np\n\n"
+	);
 
-	fprintf(python_file, "%s = sp.symbols('%s')\n", var.name, var.name);
-	fprintf(python_file, "str_expr_1 = \"");
+	fprintf(python_file, "%s = sp.symbols('%s')\n"
+						 "str_expr_1 = \""
+						 , var.name, var.name);
 
 	PrintTreeExpr(first_tree, python_file);
 
-	fprintf(python_file, "\"\n");
-	fprintf(python_file, "expr_1 = sp.sympify(str_expr_1)\n");
-	fprintf(python_file, "f_1 = sp.lambdify(%s, expr_1, modules=[\"numpy\"])\n\n", var.name);
+	fprintf(python_file, "\"\n"
+						 "expr_1 = sp.sympify(str_expr_1)\n"
+						 "f_1 = sp.lambdify(%s, expr_1, modules=[\"numpy\"])\n\n", var.name);
 
 	if (second_tree != nullptr) {
 
@@ -77,29 +101,30 @@ void CreateExprSchedule(Tree* first_tree, Tree* second_tree, ExprVar var, const 
 
 		PrintTreeExpr(second_tree, python_file);
 
-		fprintf(python_file, "\"\n");
-		fprintf(python_file, "expr_2 = sp.sympify(str_expr_2)\n");
-		fprintf(python_file, "f_2 = sp.lambdify(%s, expr_2, modules=[\"numpy\"])\n\n", var.name);
+		fprintf(python_file, "\"\n"
+							 "expr_2 = sp.sympify(str_expr_2)\n"
+							 "f_2 = sp.lambdify(%s, expr_2, modules=[\"numpy\"])\n\n", var.name);
 	}
 	
-	fprintf(python_file, "y_vals = np.linspace(-5, 5, 1000)\n");
-	fprintf(python_file, "result_1 = f_1(y_vals)\n");
+	fprintf(python_file, "y_vals = np.linspace(-5, 5, 1000)\n"
+						 "result_1 = f_1(y_vals)\n");
 
 	if (second_tree != nullptr)
 		fprintf(python_file, "result_2 = f_2(y_vals)\n\n");
 
-	fprintf(python_file, "plt.figure(figsize=(8, 6))\n");
-	fprintf(python_file, "plt.plot(y_vals, result_1, label=str_expr_1)\n");
+	fprintf(python_file, "plt.figure(figsize=(8, 6))\n"
+						 "plt.plot(y_vals, result_1, label=str_expr_1)\n");
 
 	if (second_tree != nullptr)
 		fprintf(python_file, "plt.plot(y_vals, result_2, label=str_expr_2)\n");
 
-	fprintf(python_file, "plt.xlabel('%s')\n", var.name);
-	fprintf(python_file, "plt.ylabel('f(%s)')\n", var.name);
-	fprintf(python_file, "plt.title('RUZAL DIFFERENCIATOR')\n");
-	fprintf(python_file, "plt.legend()\n");
-	fprintf(python_file, "plt.grid(True)\n");
-	fprintf(python_file, "plt.savefig(\"%s\")\n", schedule_name);
+	fprintf(python_file, "plt.xlabel('%s')\n"
+						 "plt.ylabel('f(%s)')\n"
+						 "plt.title('RUZAL DIFFERENCIATOR')\n"
+						 "plt.legend()\n"
+						 "plt.grid(True)\n"
+						 "plt.savefig(\"%s\")\n", 
+						 var.name, var.name, graph_name);
 
 	fclose(python_file);
 

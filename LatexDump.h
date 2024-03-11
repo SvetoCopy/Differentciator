@@ -15,8 +15,10 @@ struct ExprLabel {
 	char* value;
 };
 
+void PrintLatexPackages(FILE* latex_file);
+
 void AddImageLatex(Tree* tree, const char* image_name);
 
-void CreateExprSchedule(Tree* first_tree, Tree* second_tree, ExprVar var, const char* schedule_name);
+void CreateExprGraph(Tree* first_tree, Tree* second_tree, ExprVar var, const char* graph_name);
 void PrintLatexExpr(const Node* node, FILE* latex_logfile);
 #endif // !LATEXDUMP_HPP
